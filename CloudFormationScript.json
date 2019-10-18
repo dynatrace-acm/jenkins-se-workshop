@@ -68,6 +68,12 @@
             },
             "sa-east-1" : {
                 "AMI" : "ami-04fb8967affdf73b6"
+            },
+            "cn-northwest-1" : {
+                "AMI" : "ami-01d4e30d4d4952d0f"
+            },
+            "cn-north-1" : {
+                "AMI" : "ami-01993b4213b4bffb5"
             }
         }
     },
