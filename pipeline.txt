@@ -1,0 +1,96 @@
+pipeline{
+    agent any
+    parameters {
+        choice(name: 'BUILD', choices: ['1', '2'], description: 'Choose Build')
+    }
+    stages {
+        stage('Checkout'){
+            steps {
+                echo "hello"
+                git 'https://github.com/dynatrace-acm/jenkins-se-workshop'
+            }
+        }
+        stage('Build'){
+            steps {
+                echo "Building..."
+            }
+        }
+        stage('Deploy to Staging'){
+            steps {
+                dir('apps/dev') {
+                    script {
+                         try {
+                            sh "pm2 delete appdev"
+                            sleep 5
+                            sh "pm2 status"
+                        } catch (err) {
+                            echo "pm2 delete failed"
+                        } finally {
+                            sh "JENKINS_NODE_COOKIE=dontKillMe BUILD_NUMBER=${params.BUILD} DT_TAGS=Dev pm2 start -f appdev.js --update-env"
+                        }
+                        
+                    }
+                    sleep 10
+                }
+            }
+        }
+        stage('Run Load Test'){
+            steps {
+                dir('apps/dev/loadtest') {
+                    script {
+                        echo "Executing Load Test for 5 minutes..."
+                        
+                        try {
+                            sh "rm endloadtest.txt"
+                        } catch (err) {
+                            echo "endloadtest.txt doesnt exist"
+                        } finally {
+                            sh 'nohup ./loadtest.sh >/dev/null 2>&1 &'
+                        }
+                        sleep 5
+                        sh './stop_loadtest.sh'
+                        echo "Load Test stopped"
+                    }
+                }
+            }
+        }
+        stage('Deploy to Production'){
+            steps {
+                dir('apps/production') {
+                    script {
+                        try {
+                            sh "pm2 delete appprod"
+                            sleep 5
+                            sh "pm2 status"
+                        } catch (err) {
+                            echo "pm2 delete failed"
+                        } finally {
+                        sh "JENKINS_NODE_COOKIE=dontKillMe BUILD_NUMBER=${params.BUILD} DT_TAGS=Production pm2 start -f appprod.js --update-env"
+                        }
+                    }
+                    sleep 10
+                }
+            }
+        }
+        stage('Production Verification Test'){
+            steps {
+                dir('apps/production/loadtest'){
+                  script {
+                        echo "Executing Verfication Test for 5 minutes..."
+                        
+                        try {
+                            sh "rm endloadtest.txt"
+                        } catch (err) {
+                            echo "endloadtest.txt doesnt exist"
+                        } finally {
+                            sh 'nohup ./loadtest.sh >/dev/null 2>&1 &'
+                        }
+                        sleep 5
+                        sh './stop_loadtest.sh'
+                        echo "Load Test stopped"
+                    }  
+                }
+            }
+        }
+    }
+}
