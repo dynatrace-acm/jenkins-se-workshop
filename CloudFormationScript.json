@@ -154,10 +154,10 @@
                             "sudo su -\n",
 							"apt update \n",
                             "apt install openjdk-8-jdk -y\n",
-                            "wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -",
-                            "sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'",
-                            "sudo apt update",
-                            "sudo apt install jenkins -y",
+                            "wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -\n",
+                            "sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'\n",
+                            "sudo apt update\n",
+                            "sudo apt install jenkins -y\n",
                             "# go to the opt dir, download & install OneAgent with parameterized TenantID and APIToken\n",
                             "cd /opt\n",
                             "wget -O Dynatrace-OneAgent-Linux-latest.sh  \"",
@@ -170,7 +170,7 @@
                             },
                             "&arch=x86&flavor=default\"\n",
                             "/bin/sh Dynatrace-OneAgent-Linux-latest.sh APP_LOG_CONTENT_ACCESS=1\n",
-                            "sudo systemctl restart jenkins"
+                            "sudo systemctl restart jenkins\n"
                         ]]
                     }
                 }
@@ -240,4 +240,3 @@
 		}
 	}
 }
-
