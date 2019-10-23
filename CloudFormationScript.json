@@ -3,16 +3,6 @@
     "Description": "Dynatrace SE Bootcamp - Jenkins Pipeline",
 
     "Parameters":{
-        "TenantID":{
-			"Description": "Your Tenant URL in the form https://<TENANTID>.live.dynatrace.com",
-			"AllowedPattern": "https:\/\/.*\\blive.\\bdynatrace.\\b\\bcom\\b",
-			"ConstraintDescription": "must be in the format https://<TENANTID>.live.dynatrace.com",
-            "Type":"String"
-        },
-        "APIToken":{
-			"Description": "Dynatrace API Token",
-            "Type":"String"
-        },
 		"KeyName": {
             "Description": "Name of Existing EC2 Key Pair which we will use to launch new EC2 Instances",
             "Type": "AWS::EC2::KeyPair::KeyName",
@@ -24,56 +14,8 @@
 
     "Mappings": {
         "RegionMap": {
-            "us-east-1": {
-                "AMI": "ami-0d2505740b82f7948"
-            },
-            "us-east-2": {
-                "AMI": "ami-0cf8cc36b8c81c6de"
-            },
-            "us-west-1": {
-                "AMI": "ami-09c5eca75eed8245a"
-            },
-            "us-west-2": {
-                "AMI": "ami-0f05ad41860678734"
-            },
-            "ca-central-1" : {
-                "AMI" : "ami-0388b9f812caf5c3f"
-            },
-            "eu-central-1" : {
-                "AMI": "ami-080d06f90eb293a27"
-            },
-            "eu-west-1" : {
-                "AMI" : "ami-09c5eca75eed8245a"
-            },
-            "eu-west-2" : {
-                "AMI" : "ami-0f05ad41860678734"
-            },
-            "eu-west-3" : {
-                "AMI" : "ami-0697abcfa8916e673"
-            },
-            "ap-south-1" : {
-                "AMI" : "ami-01187fe59c07cd350"
-            },
-            "ap-northeast-2" : {
-                "AMI" : "ami-096560874cb404a4d"
-            },
-            "ap-southeast-1" : {
-                "AMI" : "ami-0efb24bbbf33a2fd7"
-            },
-            "ap-southeast-2" : {
-                "AMI" : "ami-03932cb7d3a1a69af"
-            },
-            "ap-northeast-1" : {
-                "AMI" : "ami-0fd02119f1653c976"
-            },
-            "sa-east-1" : {
-                "AMI" : "ami-04fb8967affdf73b6"
-            },
-            "cn-northwest-1" : {
-                "AMI" : "ami-01d4e30d4d4952d0f"
-            },
             "cn-north-1" : {
-                "AMI" : "ami-01993b4213b4bffb5"
+                "AMI" : "ami-079242a19f11f2532"
             }
         }
     },
@@ -106,44 +48,10 @@
 				],
                 "Tags": [{
                         "Key": "Purpose",
-                        "Value": "SEBootcamp"
-                    },
-                    {
-                        "Key": "Name",
-                        "Value": {
-                            "Ref": "TenantID"
-                        }
+                        "Value": "SEBootcampJenkins"
                     }
                 ],
                 "UserData": {
-                    "Fn::Base64": {
-                        "Fn::Join": ["", [
-                            "#!/bin/bash\n",
-                            "sudo su -\n",
-                            "apt update \n",
-                            "apt install nodejs -y \n",
-                            "apt install npm -y \n",
-                            "npm install pm2@latest -g \n",
-                            "apt install openjdk-8-jdk -y\n",
-                            "wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -\n",
-                            "sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'\n",
-                            "sudo apt update\n",
-                            "sudo apt install jenkins -y\n",
-                            "# go to the opt dir, download & install OneAgent with parameterized TenantID and APIToken\n",
-                            "cd /opt\n",
-                            "wget -O Dynatrace-OneAgent-Linux-latest.sh  \"",
-                            {
-                                "Ref": "TenantID"
-                            },
-                            "/api/v1/deployment/installer/agent/unix/default/latest?Api-Token=",
-                            {
-                                "Ref": "APIToken"
-                            },
-                            "&arch=x86&flavor=default\"\n",
-                            "/bin/sh Dynatrace-OneAgent-Linux-latest.sh APP_LOG_CONTENT_ACCESS=1\n",
-                            "sudo systemctl restart jenkins\n"
-                        ]]
-                    }
                 }
             }
         }
@@ -167,11 +75,11 @@
 								"PublicDnsName"
 							]
 						},
-						":8080"
+						":24711"
 					]
 				]
 			},
-			"Description": "Endpoint for EasyTravel UI"
+			"Description": "Endpoint for Jenkins UI"
 		},
 		"ApplicationDevURL":{
 			"Value": {
