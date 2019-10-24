@@ -27,7 +27,7 @@ pipeline{
                         } catch (err) {
                             echo "pm2 delete failed"
                         } finally {
-                            sh "JENKINS_NODE_COOKIE=dontKillMe BUILD_NUMBER=${params.BUILD} DT_TAGS=Dev pm2 start -f appdev.js --update-env"
+                            sh "JENKINS_NODE_COOKIE=dontKillMe BUILD_NUMBER=${params.BUILD} DT_TAGS=Dev DT_CLUSTER_ID=DevSampleNodejsApp pm2 start -f appdev.js --update-env"
                         }
                         
                     }
@@ -75,7 +75,7 @@ pipeline{
                         } catch (err) {
                             echo "pm2 delete failed"
                         } finally {
-                        sh "JENKINS_NODE_COOKIE=dontKillMe BUILD_NUMBER=${params.BUILD} DT_TAGS=Production pm2 start -f appprod.js --update-env"
+                        sh "JENKINS_NODE_COOKIE=dontKillMe BUILD_NUMBER=${params.BUILD} DT_TAGS=Production DT_CLUSTER_ID=ProdSampleNodejsApp pm2 start -f appprod.js --update-env"
                         }
                     }
                     sleep 10
