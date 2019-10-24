@@ -47,7 +47,7 @@ pipeline{
                         } finally {
                             sh 'nohup ./loadtest.sh >/dev/null 2>&1 &'
                         }
-                        sleep 5
+                        sleep 300
                         sh './stop_loadtest.sh'
                         echo "Load Test stopped"
                     }
