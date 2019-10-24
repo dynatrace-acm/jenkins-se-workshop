@@ -15,7 +15,7 @@
     "Mappings": {
         "RegionMap": {
             "cn-north-1" : {
-                "AMI" : "ami-079242a19f11f2532"
+                "AMI" : "ami-0a8b66bd48e04693b"
             }
         }
     },

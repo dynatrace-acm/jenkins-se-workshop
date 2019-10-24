@@ -17,6 +17,7 @@ pipeline{
         }
         stage('Deploy to Staging'){
             steps {
+                createDynatraceDeploymentEvent(envId: 'Dynatrace Server', tagMatchRules: [[meTypes: [[meType: 'SERVICE']], tags: [[context: 'CONTEXTLESS', key: 'stage', value: 'dev']]]]){
                 dir('apps/dev') {
                     script {
                          try {
@@ -26,17 +27,19 @@ pipeline{
                         } catch (err) {
                             echo "pm2 delete failed"
                         } finally {
-                            sh "JENKINS_NODE_COOKIE=dontKillMe BUILD_NUMBER=${params.BUILD} DT_TAGS=Dev DT_CLUSTER_ID=DevSampleNodejsApp pm2 start -f appdev.js --update-env"
+                            sh "JENKINS_NODE_COOKIE=dontKillMe BUILD_NUMBER=${params.BUILD} DT_TAGS=Dev pm2 start -f appdev.js --update-env"
                         }
                         
                     }
                     sleep 10
                 }
             }
+            }
         }
         stage('Run Load Test'){
             steps {
                 dir('apps/dev/loadtest') {
+                    recordDynatraceSession(envId: 'Dynatrace Server', tagMatchRules: [[meTypes: [[meType: 'SERVICE']], tags: [[context: 'CONTEXTLESS', key: 'stage', value: 'dev']]]], testCase: 'loadtest'){
                     script {
                         echo "Executing Load Test for 5 minutes..."
                         
@@ -52,10 +55,17 @@ pipeline{
                         echo "Load Test stopped"
                     }
                 }
+                }
+            }
+        }
+        stage('Dynatrace Quality Gate'){
+            steps {
+                perfSigDynatraceReports envId: 'Dynatrace Server', nonFunctionalFailure: 2, specFile: 'monspec.json'
             }
         }
         stage('Deploy to Production'){
             steps {
+                createDynatraceDeploymentEvent(envId: 'Dynatrace Server', tagMatchRules: [[meTypes: [[meType: 'SERVICE']], tags: [[context: 'CONTEXTLESS', key: 'stage', value: 'production']]]]){
                 dir('apps/production') {
                     script {
                         try {
@@ -65,11 +75,12 @@ pipeline{
                         } catch (err) {
                             echo "pm2 delete failed"
                         } finally {
-                        sh "JENKINS_NODE_COOKIE=dontKillMe BUILD_NUMBER=${params.BUILD} DT_TAGS=Production DT_CLUSTER_ID=ProdSampleNodejsApp pm2 start -f appprod.js --update-env"
+                        sh "JENKINS_NODE_COOKIE=dontKillMe BUILD_NUMBER=${params.BUILD} DT_TAGS=Production pm2 start -f appprod.js --update-env"
                         }
                     }
                     sleep 10
                 }
+            }
             }
         }
         stage('Production Verification Test'){

@@ -1,0 +1,18 @@
+{
+	"spec_version": "2.0",
+	"timeseries": [{
+			"timeseriesId": "com.dynatrace.builtin:service.responsetime",
+			"aggregation": "avg",
+			"tags": "[CONTEXTLESS]stage:dev",
+			"upperWarning": 1000,
+			"upperSevere": 3000
+        },
+        {
+            "timeseriesId": "com.dynatrace.builtin:service.failurerate",
+			"aggregation": "avg",
+			"tags": "[CONTEXTLESS]stage:dev",
+			"upperWarning": 5,
+			"upperSevere": 10
+        }
+	]
+}
